@@ -3,6 +3,7 @@
 #include <vector>
 #include <cmath>
 
+using std::pow;
 using std::vector;
 /**
  * The purpose of Diffie is to contain important
@@ -10,11 +11,18 @@ using std::vector;
  */
 class Diffie{
 public:
-  int createPrime();
-  int createSender(int key, int keyOne);
+  Diffie();
+  int getSecret();
+  int getPrimeOne();
+  void setPrivateKey(int key);
 private:
+  int createPrime();
+  int createSecret();
   vector<int> primes;
   void _listPrimes();
+  int primeOne;
+  int secret;
+  int privateKey;
 
 };
 
