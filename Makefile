@@ -1,5 +1,5 @@
 EXENAME = Diffie
-OBJS = Diffie.o
+OBJS = Diffie.o Main.o
 CXX = g++
 LD = g++
 
@@ -12,8 +12,11 @@ all: $(EXENAME)
 $(EXENAME) : $(OBJS)
 	$(LD) $(OBJS) $(LDFLAGS) -o $(EXENAME)
 
-Diffie.o : diffie.cpp diffie.h
-	$(CXX) $(CXXFLAGS) diffie.cpp
+Diffie.o : Diffie.cpp Diffie.h
+	$(CXX) $(CXXFLAGS) Diffie.cpp
+
+Main.o : Main.cpp
+	$(CXX) $(CXXFLAGS) Main.cpp
 
 clean:
 	rm *.o diffie

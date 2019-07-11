@@ -1,11 +1,16 @@
 #include "Diffie.h"
 
-Diffie::Diffie(){
-  primeOne = createPrime();
-  secret = createSecret();
+Diffie::Diffie()
+{
+  baseNumber = setPrime();
+  moduloValue = setPrime();
+  secretPower = setSecret();
+  privateKey = -1;
+  crossoverValue = -1;
 }
 
-void Diffie::_listPrimes(){
+void Diffie::_listPrimes()
+{
   vector<int> primestemp;
   primestemp.push_back(2);
     for(int i=3; i < 100; i++){
@@ -21,24 +26,29 @@ void Diffie::_listPrimes(){
     }
 }
 
-void setPrivateKey(int key){
-  privateKey = key;
+void Diffie::setPrivateKey(int key)
+{
+  privateKey.store(key, std::memory_order_relaxed);
 }
 
-int Diffie::getSecret(){
-  return secret;
+int Diffie::getSecret()
+{
+  return secretPower.load(std::memory_order_relaxed);
 }
 
-int Diffie::getPrimeOne(){
-  return primeOne;
+int Diffie::getBaseNumber()
+{
+  return baseNumber.load(std::memory_order_relaxed);
 }
 
-int Diffie::createPrime(){
+int Diffie::setPrime()
+{
   _listPrimes();
   return (primes[rand() % primes.size()]);
 }
 
-int Diffie::createSecret(){
+int Diffie::setSecret()
+{
   int secret = rand() % 25;
   return secret;
 
