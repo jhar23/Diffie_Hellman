@@ -31,6 +31,8 @@ public:
    */
   void setPrivateKey(int key);
 
+  void setCrossoverValue(int key);
+
 
 private:
 

@@ -1,6 +1,6 @@
 #include "Server.h"
 
-void buildServer(){
+void buildServer(Diffie& host){
   std::cout << "Calling Build Server..." << std::endl;
   int status, socketfd, accept_socket;
   int opt = 1;
@@ -29,20 +29,21 @@ void buildServer(){
     fprintf(stderr, "socket binding error");
     exit(1);
   }
+
   free(res);
   listen(socketfd, 10);
-  std::cout << "Listening..." << std::endl;
-
 
   accept_socket = accept(socketfd, (struct sockaddr *)&their_addr, &addr_size);
 
-  std::cout << "I got something" << std::endl;
 
-  const char *hello = "Hello Person";
-  int len, bytes_sent;
-  len = strlen(hello);
-  bytes_sent = send(accept_socket, hello, len, 0);
-  std::cout << bytes_sent << "Bytes sent" << std::endl;
+  int base = htonl(host.getBaseNumber());
+  int bytes_sent;
+  bytes_sent = send(accept_socket, &base, sizeof(int32_t), 0);
+
+  int buffer;
+  recv(accept_socket, &buffer, sizeof(int32_t), 0);
+  int data = ntohl(buffer);
+  std::cout << "this is data" << data << std::endl;
 
   close(socketfd);
   close(accept_socket);

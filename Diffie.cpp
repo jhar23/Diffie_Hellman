@@ -31,6 +31,10 @@ void Diffie::setPrivateKey(int key)
   privateKey.store(key, std::memory_order_relaxed);
 }
 
+void Diffie::setCrossoverValue(int key){
+  crossoverValue.store(key, std::memory_order_relaxed);
+}
+
 int Diffie::getSecret()
 {
   return secretPower.load(std::memory_order_relaxed);
