@@ -1,52 +1,27 @@
 #ifndef _MAIN_
 #define _MAIN_
+#include "Server.h"
+#include "Client.h"
 #include "Diffie.h"
-#include <stdio.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-
-
 
 int main(int argc, char const *argv[]){
-  Diffie alice;
-  int status, socketfd, accsocket;
-  socklen_t addr_size;
-  struct addrinfo hints;
-  struct sockaddr_storage their_addr;
-  struct addrinfo* res;
+  //Diffie alice;
 
-  if (argc < 2) {
-    fprintf(stderr,"usage: Diffie [hostname] [listen]\n");
+
+  if (argc != 2) {
+    fprintf(stderr,"usage: Diffie [hostname or \"Host\"]\n");
     return 1;
   }
-
-  memset(&hints, 0, sizeof(hints));
-  hints.ai_family = AF_INET;
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_flags = AI_PASSIVE;
-
-  if((status = getaddrinfo(argv[1], "5000", &hints, &res)) != 0){
-    fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
-    exit(1);
+  if(strcmp(argv[1],"host") == 0){
+    buildServer();
   }
+  if(strcmp(argv[1],"client") == 0){
 
-  if((socketfd = socket(res->ai_family, res->ai_socktype, 0)) == -1){
-    fprintf(stderr, "socket connecting error");
-    exit(1);
+    runClient();
   }
+  else{
 
-  bind(socketfd, res->ai_addr, res->ai_addrlen);
-
-  listen(socketfd, 10);
-
-  addr_size = sizeof(their_addr);
-  accsocket = accept(socketfd, (struct sockaddr *)&their_addr, &addr_size);
-
-//connect(socketfd, res->ai_addr, res->ai_addrlen);
-free(res);
+  }
+  return 0;
 }
 #endif
