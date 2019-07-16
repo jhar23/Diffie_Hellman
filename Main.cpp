@@ -6,6 +6,7 @@
 
 int main(int argc, char const *argv[]){
   Diffie alice;
+  
   if (argc != 2) {
     fprintf(stderr,"usage: Diffie [hostname or \"Host\"]\n");
     return 1;

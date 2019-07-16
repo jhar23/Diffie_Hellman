@@ -2,9 +2,11 @@
 #define _DIFFIE_H
 #include <vector>
 #include <cmath>
+#include <iostream>
+#include <stdlib.h>
+#include <time.h>
 
 using std::pow;
-using std::atomic;
 using std::vector;
 /**
  * The purpose of Diffie is to contain important
@@ -26,12 +28,22 @@ public:
   // @return baseNumber
   int getBaseNumber();
 
+  int getModuloValue();
+
   /* Set the private key used to hash
    * @param key passes the key into privateKey
    */
   void setPrivateKey(int key);
 
+  void setBaseNumber(int key);
+
+  void setModuloValue(int key);
+
   void setCrossoverValue(int key);
+
+  int createCrossoverValue();
+
+  int createPrivateKey();
 
 
 private:
@@ -49,19 +61,19 @@ private:
   void _listPrimes();
 
   // Mutually agreed upon number
-  atomic<int> baseNumber;
+  int baseNumber;
 
   // Mutually agreed upon modulo
-  atomic<int> moduloValue;
+  int moduloValue;
 
   // Secret Exponent
-  atomic<int> secretPower;
+  int secretPower;
 
   // Number received from other person
-  atomic<int> crossoverValue;
+  int crossoverValue;
 
   // Number after receiving both powers
-  atomic<int> privateKey;
+  int privateKey;
 
 };
 

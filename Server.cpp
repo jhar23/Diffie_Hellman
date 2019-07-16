@@ -2,7 +2,7 @@
 
 void buildServer(Diffie& host){
   std::cout << "Calling Build Server..." << std::endl;
-  int status, socketfd, accept_socket;
+  int status, socketfd, accept_socket, buffer;
   int opt = 1;
   socklen_t addr_size;
   struct addrinfo hints, *res;
@@ -40,10 +40,19 @@ void buildServer(Diffie& host){
   int bytes_sent;
   bytes_sent = send(accept_socket, &base, sizeof(int32_t), 0);
 
-  int buffer;
+  int modval = htonl(host.getModuloValue());
+  bytes_sent = send(accept_socket, &modval, sizeof(int32_t), 0);
+
+
   recv(accept_socket, &buffer, sizeof(int32_t), 0);
-  int data = ntohl(buffer);
-  std::cout << "this is data" << data << std::endl;
+  host.setCrossoverValue(ntohl(buffer));
+  
+  int crossVal;
+  crossVal = htonl(host.createCrossoverValue());
+  bytes_sent = send(accept_socket, &crossVal, sizeof(int32_t), 0);
+
+
+  std::cout << "this should be same: " << host.createPrivateKey() << std::endl;
 
   close(socketfd);
   close(accept_socket);
