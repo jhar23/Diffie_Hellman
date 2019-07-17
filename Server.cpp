@@ -1,34 +1,23 @@
 #include "Server.h"
 
-void createHostKey(Diffie& host){
-  int status, socketfd, accept_socket, buffer, yes = 1;
+
+void createHostKey(){
+
+  int socketfd = bindSocket();
+
+  std::cout << "This should be the same: " << establishKey(socketfd) << std::endl;
+
+}
+
+int establishKey(int socketfd)
+{
+  Diffie host;
+  int accept_socket, buffer;
   socklen_t addr_size;
-  struct addrinfo hints, *res;
   struct sockaddr_storage their_addr;
   addr_size = sizeof(their_addr);
 
-  memset(&hints, 0, sizeof(hints));
-  hints.ai_family = AF_INET; // IPv4
-  hints.ai_socktype = SOCK_STREAM; // TCP
-  hints.ai_flags = AI_PASSIVE;
-
-  if((status = getaddrinfo("127.0.0.1", "8000", &hints, &res)) != 0){
-    fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
-    exit(1);
-  }
-
-  if((socketfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1){
-    fprintf(stderr, "socket error");
-    exit(1);
-  }
-  setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-
-  if(bind(socketfd, res->ai_addr, res->ai_addrlen) == -1){
-    fprintf(stderr, "socket binding error");
-    exit(1);
-  }
-
-  free(res);
+  socketfd = bindSocket();
   listen(socketfd, 10);
 
   accept_socket = accept(socketfd, (struct sockaddr *)&their_addr, &addr_size);
@@ -49,10 +38,39 @@ void createHostKey(Diffie& host){
   crossVal = htonl(host.createCrossoverValue());
   bytes_sent = send(accept_socket, &crossVal, sizeof(int32_t), 0);
 
-
-  std::cout << "this should be same: " << host.createPrivateKey() << std::endl;
-
   close(socketfd);
   close(accept_socket);
-  return;
+  return host.createPrivateKey();
+}
+
+int bindSocket()
+{
+  int status, socketfd, yes = 1;
+
+  struct addrinfo hints, *res;
+
+
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_INET; // IPv4
+  hints.ai_socktype = SOCK_STREAM; // TCP
+  hints.ai_flags = AI_PASSIVE;
+
+  if((status = getaddrinfo("127.0.0.1", "8000", &hints, &res)) != 0){
+    fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+    exit(1);
+  }
+
+  if((socketfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1){
+    fprintf(stderr, "socket error");
+    exit(1);
+  }
+  setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+
+  if(bind(socketfd, res->ai_addr, res->ai_addrlen) == -1){
+    fprintf(stderr, "socket binding error: %s\n", strerror(errno));
+    exit(1);
+  }
+
+  free(res);
+  return socketfd;
 }

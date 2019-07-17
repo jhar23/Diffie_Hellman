@@ -11,7 +11,12 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
+  void createHostKey();
 
-void createHostKey(Diffie& host);
+  int bindSocket();
+
+  int establishKey(int socketfd);
+
+
 
 #endif
