@@ -15,7 +15,7 @@
 
   int bindSocket();
 
-  int establishKey(int socketfd);
+  int establishHostKey(int socketfd);
 
 
 

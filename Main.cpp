@@ -17,7 +17,7 @@ int main(int argc, char const *argv[]){
   }
   if(strcmp(argv[1],"client") == 0){
 
-    createClientKey(alice);
+    createClientKey();
   }
   else{
 

@@ -5,11 +5,11 @@ void createHostKey(){
 
   int socketfd = bindSocket();
 
-  std::cout << "This should be the same: " << establishKey(socketfd) << std::endl;
+  std::cout << "This should be the same: " << establishHostKey(socketfd) << std::endl;
 
 }
 
-int establishKey(int socketfd)
+int establishHostKey(int socketfd)
 {
   Diffie host;
   int accept_socket, buffer;

@@ -12,7 +12,11 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-void createClientKey(Diffie& client);
+void createClientKey();
+
+int connectToServer();
+
+int establishClientKey(int socketfd);
 
 
 
