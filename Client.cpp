@@ -1,6 +1,6 @@
 #include "Client.h"
 
-void runClient(Diffie& client){
+void createClientKey(Diffie& client){
   int status, socketfd;
 
   struct addrinfo hints, *res;

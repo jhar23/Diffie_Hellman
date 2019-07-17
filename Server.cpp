@@ -1,9 +1,7 @@
 #include "Server.h"
 
-void buildServer(Diffie& host){
-  std::cout << "Calling Build Server..." << std::endl;
-  int status, socketfd, accept_socket, buffer;
-  int opt = 1;
+void createHostKey(Diffie& host){
+  int status, socketfd, accept_socket, buffer, yes = 1;
   socklen_t addr_size;
   struct addrinfo hints, *res;
   struct sockaddr_storage their_addr;
@@ -23,7 +21,7 @@ void buildServer(Diffie& host){
     fprintf(stderr, "socket error");
     exit(1);
   }
-  setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+  setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
 
   if(bind(socketfd, res->ai_addr, res->ai_addrlen) == -1){
     fprintf(stderr, "socket binding error");
@@ -46,7 +44,7 @@ void buildServer(Diffie& host){
 
   recv(accept_socket, &buffer, sizeof(int32_t), 0);
   host.setCrossoverValue(ntohl(buffer));
-  
+
   int crossVal;
   crossVal = htonl(host.createCrossoverValue());
   bytes_sent = send(accept_socket, &crossVal, sizeof(int32_t), 0);

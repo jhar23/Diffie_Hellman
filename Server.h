@@ -12,6 +12,6 @@
 #include <unistd.h>
 
 
-void buildServer(Diffie& host);
+void createHostKey(Diffie& host);
 
 #endif

@@ -12,6 +12,8 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-void runClient(Diffie& client);
+void createClientKey(Diffie& client);
+
+
 
 #endif
