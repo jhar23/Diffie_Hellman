@@ -17,7 +17,6 @@ int establishKey(int socketfd)
   struct sockaddr_storage their_addr;
   addr_size = sizeof(their_addr);
 
-  socketfd = bindSocket();
   listen(socketfd, 10);
 
   accept_socket = accept(socketfd, (struct sockaddr *)&their_addr, &addr_size);
