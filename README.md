@@ -40,7 +40,7 @@ Alice did not know Bob's secret number, and vice versa. This means they would no
 be able to create the key without the other person, and a man in the middle could not
 replicate the key.
 
-## Diffie
+### Diffie
 
 Diffie is a class created to manage the different stages in the key exchange.
 It first generates a vector of prime numbers, and picks two random numbers from
@@ -49,17 +49,17 @@ that vector, one is the base, the other is the modulus.
 This class also has functions to create the values needed to send the parts of the key
 to the other person.
 
-## Server
+### Server
 
 Server is where the host creates a socket and listens for connections. Upon finding a connection,
 the Server code will start creating a key for the two parties to use.
 
-## Client
+### Client
 
 Client is where the client will create a socket by connecting to the host, and then communicate
 to establish a key.
 
-## Future Plans
+### Future Plans
 
 In the future I plan to clean up the code for the 3 files currently in the repo, then use the
 key that's generated to encrypt a message and have the other person decrypt it using the key.
