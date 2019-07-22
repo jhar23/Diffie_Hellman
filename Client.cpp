@@ -1,9 +1,43 @@
 #include "Client.h"
 
 void createClientKey(){
-  int socketfd = connectToServer();
-  std::cout << "These should be the same: " << establishClientKey(socketfd) << std::endl;
 
+  int socketfd = connectToServer();
+  int key = establishClientKey(socketfd);
+
+  std::cout << "These should be the same: " << key << std::endl;
+
+  clientChat(socketfd, key);
+
+}
+
+int connectToServer()
+{
+  int status, socketfd;
+  struct addrinfo hints, *res;
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_INET; // IPv4
+  hints.ai_socktype = SOCK_STREAM; // TCP
+  hints.ai_flags = AI_PASSIVE;
+
+  std::string host;
+  std::cout << "What address do you want to connect to? ";
+  std::cin >> host;
+
+  if((status = getaddrinfo(host.c_str(), "8000", &hints, &res)) != 0){
+    fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+    exit(1);
+  }
+
+  if((socketfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1){
+    fprintf(stderr, "socket error");
+    exit(1);
+  }
+
+  connect(socketfd, res->ai_addr, res->ai_addrlen);
+  free(res);
+
+  return socketfd;
 }
 
 int establishClientKey(int socketfd)
@@ -25,33 +59,22 @@ int establishClientKey(int socketfd)
   bytes_recv = recv(socketfd, &buffer, sizeof(int32_t), 0);
   client.setCrossoverValue(ntohl(buffer));
 
-
-  close(socketfd);
   return client.createPrivateKey();
 }
 
-int connectToServer()
+void clientChat(int socketfd, int key)
 {
-  int status, socketfd;
 
-  struct addrinfo hints, *res;
-  memset(&hints, 0, sizeof(hints));
-  hints.ai_family = AF_INET; // IPv4
-  hints.ai_socktype = SOCK_STREAM; // TCP
-  hints.ai_flags = AI_PASSIVE;
+  char buffer[32];
+  memset(&buffer, 0, sizeof(buffer));
+  std::cout << "Send a message to host: ";
+  std::cin.ignore();
+  std::cin.getline(buffer, sizeof(buffer));
 
-  if((status = getaddrinfo("127.0.0.1", "8000", &hints, &res)) != 0){
-    fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
-    exit(1);
+  for(unsigned long i = 0; i < strlen(buffer); i++)
+  {
+    buffer[i] = key ^ buffer[i];
   }
+  send(socketfd, &buffer, strlen(buffer), 0);
 
-  if((socketfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1){
-    fprintf(stderr, "socket error");
-    exit(1);
-  }
-
-  connect(socketfd, res->ai_addr, res->ai_addrlen);
-  free(res);
-
-  return socketfd;
 }

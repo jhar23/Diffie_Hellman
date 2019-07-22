@@ -3,23 +3,27 @@
 
 void createHostKey(){
 
-  int socketfd = bindSocket();
-
-  std::cout << "This should be the same: " << establishHostKey(socketfd) << std::endl;
-
-}
-
-int establishHostKey(int socketfd)
-{
-  Diffie host;
-  int accept_socket, buffer;
+  int accept_socket, socketfd;
   socklen_t addr_size;
   struct sockaddr_storage their_addr;
   addr_size = sizeof(their_addr);
 
-  listen(socketfd, 10);
+  socketfd = bindSocket();
 
+  listen(socketfd, 10);
   accept_socket = accept(socketfd, (struct sockaddr *)&their_addr, &addr_size);
+
+  int key = establishHostKey(accept_socket);
+  std::cout << "This should be the same: " << key << std::endl;
+
+  serverChat(accept_socket, key);
+}
+
+int establishHostKey(int accept_socket)
+{
+  Diffie host;
+  int buffer;
+
 
 
   int base = htonl(host.getBaseNumber());
@@ -37,8 +41,6 @@ int establishHostKey(int socketfd)
   crossVal = htonl(host.createCrossoverValue());
   bytes_sent = send(accept_socket, &crossVal, sizeof(int32_t), 0);
 
-  close(socketfd);
-  close(accept_socket);
   return host.createPrivateKey();
 }
 
@@ -72,4 +74,29 @@ int bindSocket()
 
   free(res);
   return socketfd;
+}
+
+void serverChat(int accept_socket, int key)
+{
+  char buffer[32];
+  memset(&buffer, 0, sizeof(buffer));
+  unsigned long bytes_recv;
+
+  bytes_recv = recv(accept_socket, &buffer, sizeof(buffer), 0);
+
+  for(unsigned long i = 0; i < bytes_recv; i++)
+  {
+    std::cout << buffer[i];
+  }
+  std::cout << std::endl;
+
+  for(unsigned long i = 0; i < bytes_recv; i++)
+  {
+    buffer[i] = buffer[i] ^ key;
+  }
+  //buffer[bytes_recv] = '\0';
+  std::cout << bytes_recv << std::endl;
+  printf("Message Received: %s\n", buffer);
+
+
 }

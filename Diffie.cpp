@@ -30,6 +30,11 @@ void Diffie::_listPrimes()
     }
 }
 
+int Diffie::getPrivateKey()
+{
+  return privateKey;
+}
+
 void Diffie::setPrivateKey(int key)
 {
   privateKey = key;

@@ -15,7 +15,9 @@
 
   int bindSocket();
 
-  int establishHostKey(int socketfd);
+  int establishHostKey(int accept_socket);
+
+  void serverChat(int accept_socket, int key);
 
 
 

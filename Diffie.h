@@ -30,6 +30,8 @@ public:
 
   int getModuloValue();
 
+  int getPrivateKey();
+
   /* Set the private key used to hash
    * @param key passes the key into privateKey
    */
