@@ -56,7 +56,7 @@ int bindSocket()
   hints.ai_socktype = SOCK_STREAM; // TCP
   hints.ai_flags = AI_PASSIVE;
 
-  if((status = getaddrinfo("127.0.0.1", "8000", &hints, &res)) != 0){
+  if((status = getaddrinfo(NULL, "8000", &hints, &res)) != 0){
     fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
     exit(1);
   }
