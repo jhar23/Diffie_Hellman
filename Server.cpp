@@ -86,16 +86,9 @@ void serverChat(int accept_socket, int key)
 
   for(unsigned long i = 0; i < bytes_recv; i++)
   {
-    std::cout << buffer[i];
-  }
-  std::cout << std::endl;
-
-  for(unsigned long i = 0; i < bytes_recv; i++)
-  {
     buffer[i] = buffer[i] ^ key;
   }
-  //buffer[bytes_recv] = '\0';
-  std::cout << bytes_recv << std::endl;
+
   printf("Message Received: %s\n", buffer);
 
 
