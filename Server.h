@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <thread>
 
   void createHostKey();
 
@@ -18,6 +19,10 @@
   int establishHostKey(int accept_socket);
 
   void serverChat(int accept_socket, int key);
+
+  void server_recv_loop(int socketfd, int key);
+
+  void server_send_loop(int socketfd, int key);
 
 
 

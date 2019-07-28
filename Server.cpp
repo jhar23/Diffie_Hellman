@@ -1,6 +1,7 @@
 #include "Server.h"
 
 
+
 void createHostKey(){
 
   int accept_socket, socketfd;
@@ -17,6 +18,9 @@ void createHostKey(){
   std::cout << "This should be the same: " << key << std::endl;
 
   serverChat(accept_socket, key);
+
+  close(socketfd);
+  std::cout << "Chat Terminated" << std::endl;
 }
 
 int establishHostKey(int accept_socket)
@@ -78,18 +82,63 @@ int bindSocket()
 
 void serverChat(int accept_socket, int key)
 {
+  std::thread send (server_send_loop, accept_socket, key);
+  std::thread recv (server_recv_loop, accept_socket, key);
+
+  send.join();
+  recv.join();
+}
+
+void server_recv_loop(int socketfd, int key)
+{
   char buffer[32];
-  memset(&buffer, 0, sizeof(buffer));
-  unsigned long bytes_recv;
-
-  bytes_recv = recv(accept_socket, &buffer, sizeof(buffer), 0);
-
-  for(unsigned long i = 0; i < bytes_recv; i++)
+  while(true)
   {
-    buffer[i] = buffer[i] ^ key;
+    memset(&buffer, 0, sizeof(buffer));
+    unsigned long bytes_recv;
+
+    bytes_recv = recv(socketfd, &buffer, sizeof(buffer), 0);
+
+    if(bytes_recv == 0)
+    {
+      break;
+    }
+
+    for(unsigned long i = 0; i < bytes_recv; i++)
+    {
+      buffer[i] = buffer[i] ^ key;
+    }
+
+    printf("\nMessage Received: %s\n", buffer);
   }
+}
 
-  printf("Message Received: %s\n", buffer);
+void server_send_loop(int socketfd, int key)
+{
+  char buffer[32];
+  int conn = 1;
+  while(true)
+  {
+    memset(buffer, 0, sizeof(buffer));
 
+    std::cout << "Send a message to client: ";
 
+    std::cin.getline(buffer, sizeof(buffer));
+
+    if(strcmp(buffer, "exit") == 0)
+    {
+      close(socketfd);
+      break;
+    }
+
+    for(unsigned long i = 0; i < strlen(buffer); i++)
+    {
+      buffer[i] = key ^ buffer[i];
+    }
+    conn = send(socketfd, &buffer, strlen(buffer), 0);
+    if(conn == -1)
+    {
+      break;
+    }
+  }
 }

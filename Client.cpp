@@ -21,7 +21,7 @@ int connectToServer()
   hints.ai_flags = AI_PASSIVE;
 
   std::string host;
-  std::cout << "What address do you want to connect to? ";
+  std::cout << "What address do you want to connect to? " << std::endl;
   std::cin >> host;
 
   if((status = getaddrinfo(host.c_str(), "8000", &hints, &res)) != 0){
@@ -64,17 +64,65 @@ int establishClientKey(int socketfd)
 
 void clientChat(int socketfd, int key)
 {
+  std::thread send(client_send_loop, socketfd, key);
+  std::thread recv(client_recv_loop, socketfd, key);
 
+  send.join();
+  recv.join();
+
+}
+
+void client_recv_loop(int socketfd, int key)
+{
   char buffer[32];
-  memset(&buffer, 0, sizeof(buffer));
-  std::cout << "Send a message to host: ";
-  std::cin.ignore();
-  std::cin.getline(buffer, sizeof(buffer));
-
-  for(unsigned long i = 0; i < strlen(buffer); i++)
+  while(true)
   {
-    buffer[i] = key ^ buffer[i];
-  }
-  send(socketfd, &buffer, strlen(buffer), 0);
+    memset(&buffer, 0, sizeof(buffer));
+    unsigned long bytes_recv;
 
+
+    bytes_recv = recv(socketfd, &buffer, sizeof(buffer), 0);
+
+    if(bytes_recv == 0)
+    {
+      break;
+    }
+
+    for(unsigned long i = 0; i < bytes_recv; i++)
+    {
+      buffer[i] = buffer[i] ^ key;
+    }
+
+    printf("\nMessage Received: %s\n", buffer);
+  }
+}
+
+void client_send_loop(int socketfd, int key)
+{
+  char buffer[32];
+  int conn = 1;
+  std::cin.ignore();
+  while(true)
+  {
+    memset(buffer, 0, sizeof(buffer));
+    std::cout << "Send a message to host: ";
+
+    std::cin.getline(buffer, sizeof(buffer));
+
+    if(strcmp(buffer, "exit") == 0)
+    {
+      close(socketfd);
+      break;
+    }
+
+    for(unsigned long i = 0; i < strlen(buffer); i++)
+    {
+      buffer[i] = key ^ buffer[i];
+    }
+    conn = send(socketfd, &buffer, strlen(buffer), 0);
+    if(conn == -1)
+    {
+      break;
+    }
+  }
 }

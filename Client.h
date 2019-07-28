@@ -13,6 +13,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <thread>
 
 void createClientKey();
 
@@ -21,6 +22,10 @@ int connectToServer();
 int establishClientKey(int socketfd);
 
 void clientChat(int socketfd, int key);
+
+void client_recv_loop(int socketfd, int key);
+
+void client_send_loop(int socketfd, int key);
 
 
 
