@@ -1,5 +1,5 @@
 EXENAME = Diffie
-OBJS = Diffie.o Main.o Server.o Client.o
+OBJS = Diffie.o Main.o Server.o Client.o Chat.o
 CXX = g++
 LD = g++
 
@@ -23,6 +23,9 @@ Server.o : Server.cpp Server.h
 
 Client.o : Client.cpp Client.h
 	$(CXX) $(CXXFLAGS) Client.cpp
+
+Chat.o : Chat.cpp Chat.h
+	$(CXX) $(CXXFLAGS) Chat.cpp
 
 clean:
 	rm *.o diffie

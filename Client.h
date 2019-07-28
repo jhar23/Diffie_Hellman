@@ -1,6 +1,7 @@
 #ifndef _CLIENT_
 #define _CLIENT_
 #include "Diffie.h"
+#include "Chat.h"
 #include <cerrno>
 #include <iostream>
 #include <stdio.h>
